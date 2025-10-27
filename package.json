@@ -1,0 +1,28 @@
+{
+  "name": "bnb-backend",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "dev": "node --import=dotenv/config --import=tsx --watch src/index.ts",
+    "build": "tsc",
+    "start": "node --import=dotenv/config dist/index.js",
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@hono/node-server": "^1.19.5",
+    "@hono/zod-validator": "^0.7.4",
+    "@supabase/supabase-js": "^2.76.1",
+    "dotenv": "^17.2.3",
+    "hono": "^4.10.2",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/node": "^24.9.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}
