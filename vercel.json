@@ -1,9 +1,10 @@
 {
-  "version": 2,
-  "builds": [
-    { "src": "src/index.ts", "use": "@vercel/node" }
-  ],
-  "routes": [
-    { "src": "/(.*)", "dest": "src/index.ts" }
+  "functions": {
+    "api/index.ts": {
+      "runtime": "edge"
+    }
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/api" }
   ]
 }

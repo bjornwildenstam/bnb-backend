@@ -4,35 +4,41 @@ import { serve } from "@hono/node-server"
 import { cors } from "hono/cors"
 
 import propertyApp from "./routes/property.js"
-import authApp from "./routes/auth.js"          // ✅ lägg till importen
 import { attachUser } from "./middlewares/auth.js"
-import type { AppBindings } from "./types/context.js"
+// (om du har auth-routes)
+// import authApp from "./routes/auth.js"
 
-const app = new Hono<AppBindings>({ strict: false })   // ✅ typa appen
+const app = new Hono({ strict: false })
 
-// ✅ CORS först (tillfälligt öppet under felsökning)
+// CORS först
 app.use(
   "*",
   cors({
-    origin: "*",
+    origin: "*", // lås ner senare när allt funkar
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
 )
 
-// ✅ Preflight-OPTIONS ska alltid få 200
+// Preflight
 app.options("*", (c) => c.text("ok"))
 
+// Auth-middleware
 app.use("*", attachUser)
 
-// ✅ Mounta routes
-app.route("/auth", authApp)               // ✅ nu finns authApp
+// Routes
+// if (authApp) app.route("/auth", authApp)
 app.route("/properties", propertyApp)
-
 app.get("/", (c) => c.text("Hello from backend!"))
 
-serve(
-  { fetch: app.fetch, port: Number(process.env.HONO_PORT) || 3000 },
-  (info) => console.log(`Server running on: http://localhost:${info.port}`)
-)
+// 👇 Viktigt: exportera app så Vercel kan använda den
+export default app
+
+// 👇 Starta en server **bara lokalt** (Vercel behöver inte detta)
+if (!process.env.VERCEL) {
+  serve(
+    { fetch: app.fetch, port: Number(process.env.HONO_PORT) || 3000 },
+    (info) => console.log(`Server running on: http://localhost:${info.port}`)
+  )
+}
 
