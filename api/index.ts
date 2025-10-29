@@ -1,30 +1,30 @@
 // api/index.ts
-import { Hono } from "hono"
-import { cors } from "hono/cors"
-import { handle } from "hono/vercel"
+import { Hono } from 'hono'
+import { cors } from 'hono/cors'
+import { handle } from 'hono/vercel'
 
-import propertyApp from "../src/routes/property.js"
-import { attachUser } from "../src/middlewares/auth.js"
-// import authApp from "../src/routes/auth.js" // om du har auth-routen
+import propertyApp from '../src/routes/property.js'
+import { attachUser } from '../src/middlewares/auth.js'
+// import authApp from '../src/routes/auth.js' // om du har auth-router
 
-// Skapa appen
 const app = new Hono({ strict: false })
 
-// CORS först
-app.use("*", cors({
-  origin: "*",  // byt till ["http://localhost:5173", "https://din-frontend.vercel.app"] sen
-  allowHeaders: ["Content-Type", "Authorization"],
-  allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+// CORS (öppet för att verifiera – lås ned när det funkar)
+app.use('*', cors({
+  origin: '*',
+  allowHeaders: ['Content-Type', 'Authorization'],
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 }))
-app.options("*", (c) => c.text("ok"))
+app.options('*', c => c.text('ok'))
 
-// Middleware + routes
-app.use("*", attachUser)
-app.route("/properties", propertyApp)
-// if (authApp) app.route("/auth", authApp)
+app.use('*', attachUser)
+app.route('/properties', propertyApp)
+// if (authApp) app.route('/auth', authApp)
 
-app.get("/", (c) => c.text("Hello from backend!"))
+app.get('/', c => c.text('Hello from backend!'))
 
-// Exportera för Vercel
-export const runtime = "nodejs20.x"
+// ⬅️ Den här raden talar om för Vercel att köra Node.js 20 i en vanlig Serverless Function
+export const config = { runtime: 'nodejs20.x' }
+
+// ⬅️ Vercel handler
 export default handle(app)
