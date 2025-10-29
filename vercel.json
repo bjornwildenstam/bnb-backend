@@ -1,10 +1,7 @@
 {
   "functions": {
     "api/index.ts": {
-      "runtime": "edge"
+      "runtime": "nodejs20.x"
     }
-  },
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/api" }
-  ]
+  }
 }
