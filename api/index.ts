@@ -9,7 +9,7 @@ import { attachUser } from '../src/middlewares/auth.js'
 
 const app = new Hono({ strict: false })
 
-// CORS (öppet för att verifiera – lås ned när det funkar)
+// CORS (öppet nu; lås ner senare)
 app.use('*', cors({
   origin: '*',
   allowHeaders: ['Content-Type', 'Authorization'],
@@ -23,8 +23,7 @@ app.route('/properties', propertyApp)
 
 app.get('/', c => c.text('Hello from backend!'))
 
-// ⬅️ Den här raden talar om för Vercel att köra Node.js 20 i en vanlig Serverless Function
-export const config = { runtime: 'nodejs20.x' }
+// ✅ Korrekt runtime för Vercel Serverless (inte versionssträng)
+export const config = { runtime: 'nodejs' }
 
-// ⬅️ Vercel handler
 export default handle(app)
