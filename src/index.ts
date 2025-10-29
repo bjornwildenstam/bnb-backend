@@ -8,17 +8,15 @@ import { attachUser } from "./middlewares/auth.js"
 
 const app = new Hono({ strict: false })
 
-// ✅ CORS först
+
 app.use(
   "*",
   cors({
-    origin: "http://localhost:5173",  // lägg till FE-prod-URL vid deploy (array funkar också)
+    origin: "*", // tillfälligt för att bekräfta CORS
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    // INTE credentials: true  (vi kör Header-JWT, inte cookies)
   })
 )
-
 app.use("*", attachUser)
 app.route("/properties", propertyApp)
 app.get("/", (c) => c.text("Hello from backend!"))
