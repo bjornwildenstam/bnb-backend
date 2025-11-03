@@ -22,6 +22,7 @@ app.get("/", async (c) => {
     availability: p.availability,
     createdAt: p.created_at,
     userId: p.user_id,
+    imageUrl: p.image_url,
   }))
   return c.json(list)
 })
@@ -40,6 +41,7 @@ app.post("/", requireAuth, async (c) => {
     location: String(body.location),
     price_per_night: Number(body.pricePerNight),
     availability: Boolean(body.availability),
+    image_url: body.image_url ? String(body.image_url) : null, 
   }
 
   const { data, error } = await sb
@@ -58,6 +60,7 @@ app.post("/", requireAuth, async (c) => {
     availability: data.availability,
     createdAt: data.created_at,
     userId: data.user_id,
+    imageUrl: data.image_url,
   }, 201)
 })
 
@@ -88,6 +91,7 @@ app.get("/:id", async (c) => {
     availability: data.availability,
     createdAt: data.created_at,
     userId: data.user_id,
+    imageUrl: data.image_url,
   });
 });
 
@@ -145,6 +149,7 @@ app.put("/:id", requireAuth, async (c) => {
     availability: data.availability,
     createdAt: data.created_at,
     userId: data.user_id,
+    imageUrl: data.image_url,
   })
 })
 
