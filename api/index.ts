@@ -4,12 +4,12 @@ import { handle } from 'hono/vercel'
 import { cors } from 'hono/cors'
 
 import propertyApp from '../src/routes/property.js'
+import authApp from '../src/routes/auth.js'
 import { attachUser } from '../src/middlewares/auth.js'
-import authApp from '../src/routes/auth.js' 
 
 const app = new Hono({ strict: false })
 
-
+// CORS – öppet för skolprojekt
 app.use(
   '*',
   cors({
