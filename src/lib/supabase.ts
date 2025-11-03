@@ -1,14 +1,15 @@
 
-import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js'
 
 const url = process.env.SUPABASE_URL!
-const key = process.env.SUPABASE_ANON_KEY!
+const anon = process.env.SUPABASE_ANON_KEY!   
 
-// Anon-klienten kan du fortsätta använda för öppna SELECTs
-export const supabase = createClient(url, key)
+// Bas-klient (utan user-token)
+export const supabase = createClient(url, anon)
 
-// Skapa en klient som skickar Authorization: Bearer <token> på varje query
-export const supabaseWithAuth = (token: string): SupabaseClient =>
-  createClient(url, key, {
-    global: { headers: { Authorization: `Bearer ${token}` } },
+/** Skapa en klient som skickar med användarens JWT (för RLS/auth.uid()) */
+export function supabaseFor(token?: string) {
+  return createClient(url, anon, {
+    global: { headers: token ? { Authorization: `Bearer ${token}` } : {} },
   })
+}

@@ -2,11 +2,9 @@
 import { Hono } from "hono"
 import { serve } from "@hono/node-server"
 import { cors } from "hono/cors"
-
 import propertyApp from "./routes/property.js"
 import { attachUser } from "./middlewares/auth.js"
-// (om du har auth-routes)
-// import authApp from "./routes/auth.js"
+import authApp from "./routes/auth.js"
 
 const app = new Hono({ strict: false })
 
@@ -27,7 +25,7 @@ app.options("*", (c) => c.text("ok"))
 app.use("*", attachUser)
 
 // Routes
-// if (authApp) app.route("/auth", authApp)
+app.route("/auth", authApp)
 app.route("/properties", propertyApp)
 app.get("/", (c) => c.text("Hello from backend!"))
 

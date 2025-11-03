@@ -1,29 +1,39 @@
 // api/index.ts
 import { Hono } from 'hono'
-import { cors } from 'hono/cors'
 import { handle } from 'hono/vercel'
+import { cors } from 'hono/cors'
 
 import propertyApp from '../src/routes/property.js'
 import { attachUser } from '../src/middlewares/auth.js'
-// import authApp from '../src/routes/auth.js' // om du har auth-router
+import authApp from '../src/routes/auth.js' 
 
 const app = new Hono({ strict: false })
 
-// CORS (öppet nu; lås ner senare)
-app.use('*', cors({
-  origin: '*',
-  allowHeaders: ['Content-Type', 'Authorization'],
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-}))
-app.options('*', c => c.text('ok'))
 
+app.use(
+  '*',
+  cors({
+    origin: '*',
+    allowHeaders: ['Content-Type', 'Authorization'],
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  }),
+)
+
+// Preflight
+app.options('*', (c) => c.text('ok'))
+
+// Auth-middleware (läser Authorization: Bearer <jwt> och sätter c.set('user', ...))
 app.use('*', attachUser)
+
+// Routes
 app.route('/properties', propertyApp)
-// if (authApp) app.route('/auth', authApp)
+app.route('/auth', authApp)
 
-app.get('/', c => c.text('Hello from backend!'))
+app.get('/', (c) => c.text('Hello from backend (Vercel)!'))
 
-// ✅ Korrekt runtime för Vercel Serverless (inte versionssträng)
-export const config = { runtime: 'nodejs' }
+// Vercel runtime (Node serverless)
+export const config = {
+  runtime: 'nodejs',
+}
 
 export default handle(app)
