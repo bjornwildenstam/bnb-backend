@@ -53,5 +53,11 @@ auth.get("/me", (c) => {
   if (!user) return c.json({ message: "Unauthorized" }, 401)
   return c.json(user)
 })
+// POST /auth/signout – "loggar ut" (frontenden hanterar token-rensning)
+auth.post("/signout", async (c) => {
+  // Vi har ingen server-side session att ta bort, eftersom JWT hanteras i frontend
+  // men vi returnerar 200 OK så frontend vet att det gick bra.
+  return c.json({ message: "Signed out successfully" }, 200)
+})
 
 export default auth
