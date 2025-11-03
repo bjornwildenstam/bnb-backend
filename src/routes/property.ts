@@ -22,7 +22,7 @@ app.get("/", async (c) => {
     availability: p.availability,
     createdAt: p.created_at,
     userId: p.user_id,
-    imageUrl: p.image_url,
+    imageUrl: p.image_url ?? null, 
   }))
   return c.json(list)
 })
@@ -60,7 +60,7 @@ app.post("/", requireAuth, async (c) => {
     availability: data.availability,
     createdAt: data.created_at,
     userId: data.user_id,
-    imageUrl: data.image_url,
+    image_url: body.imageUrl ? String(body.imageUrl) : null,
   }, 201)
 })
 
@@ -91,7 +91,7 @@ app.get("/:id", async (c) => {
     availability: data.availability,
     createdAt: data.created_at,
     userId: data.user_id,
-    imageUrl: data.image_url,
+    imageUrl: data.image_url ?? null,
   });
 });
 
@@ -109,6 +109,7 @@ app.put("/:id", requireAuth, async (c) => {
   if (body.location !== undefined) patch.location = String(body.location)
   if (body.pricePerNight !== undefined) patch.price_per_night = Number(body.pricePerNight)
   if (body.availability !== undefined) patch.availability = Boolean(body.availability)
+  if (body.imageUrl !== undefined) patch.image_url = body.imageUrl ? String(body.imageUrl) : null
 
   // Försök uppdatera *endast* om raden ägs av user
   const upd = await sb
@@ -149,7 +150,7 @@ app.put("/:id", requireAuth, async (c) => {
     availability: data.availability,
     createdAt: data.created_at,
     userId: data.user_id,
-    imageUrl: data.image_url,
+    imageUrl: data.image_url ?? null,
   })
 })
 
