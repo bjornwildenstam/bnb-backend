@@ -2,7 +2,7 @@
 import { Hono } from 'hono'
 import { handle } from 'hono/vercel'
 import { cors } from 'hono/cors'
-
+import bookingApp from "../src/routes/booking.js"
 import propertyApp from '../src/routes/property.js'
 import authApp from '../src/routes/auth.js'
 import { attachUser } from '../src/middlewares/auth.js'
@@ -28,7 +28,7 @@ app.use('*', attachUser)
 // Routes
 app.route('/properties', propertyApp)
 app.route('/auth', authApp)
-
+app.route("/bookings", bookingApp)
 app.get('/', (c) => c.text('Hello from backend (Vercel)!'))
 
 // Vercel runtime (Node serverless)

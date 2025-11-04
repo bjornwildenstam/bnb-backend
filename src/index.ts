@@ -5,6 +5,7 @@ import { cors } from "hono/cors"
 import propertyApp from "./routes/property.js"
 import { attachUser } from "./middlewares/auth.js"
 import authApp from "./routes/auth.js"
+import bookingApp from "./routes/booking.js"
 
 const app = new Hono({ strict: false })
 
@@ -27,6 +28,7 @@ app.use("*", attachUser)
 // Routes
 app.route("/auth", authApp)
 app.route("/properties", propertyApp)
+app.route("/bookings", bookingApp)
 app.get("/", (c) => c.text("Hello from backend!"))
 
 // 👇 Viktigt: exportera app så Vercel kan använda den
