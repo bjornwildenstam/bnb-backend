@@ -1,5 +1,5 @@
 // Endast typer (rensas bort i runtime). Hjälper editor/kompilator.
-// Importeras som '../types/property.js' i NodeNext-läge.
+
 
 export interface NewProperty {
   name: string

@@ -1,6 +1,4 @@
-// Middleware för auth:
-// 1) attachUser: läser Authorization: Bearer <token>, hämtar user från Supabase och sätter c.set('user', user)
-// 2) requireAuth: stoppar request om ingen user hittas
+// attachUser: läser Authorization: Bearer <token>, hämtar user från Supabase och sätter c.set('user', user)
 import type { MiddlewareHandler } from "hono"
 import type { AppBindings } from "../types/context.js"
 import { supabase } from "../lib/supabase.js"

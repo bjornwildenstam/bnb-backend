@@ -31,7 +31,7 @@ function mapBookingRow(row: BookingWithProperty): BookingResponse {
   }
 }
 
-// POST /bookings  { propertyId, checkInDate, checkOutDate }
+// POST /bookings  
 app.post("/", requireAuth, async (c) => {
   const user = c.get("user")!
   const token =
@@ -57,7 +57,7 @@ app.post("/", requireAuth, async (c) => {
     )
   }
 
-  // 1) Hämta property för att få pris per natt
+  //  Hämta property för att få pris per natt
   const { data: prop, error: propError } = await supabase
     .from("properties")
     .select("id, price_per_night")
@@ -82,7 +82,7 @@ app.post("/", requireAuth, async (c) => {
 
   const totalPrice = nights * Number(prop.price_per_night)
 
-  // 2) Bygg payload i DB-format
+  // Bygg payload i DB-format
   const newBooking: NewBooking = {
     user_id: user.id,
     property_id: propertyId,
@@ -91,7 +91,7 @@ app.post("/", requireAuth, async (c) => {
     total_price: totalPrice,
   }
 
-  // 3) Skapa booking – RLS ser till att user_id = auth.uid()
+  //  Skapa booking – RLS ser till att user_id = auth.uid()
   const { data, error } = await sb
     .from("bookings")
     .insert(newBooking)

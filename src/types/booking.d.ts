@@ -9,7 +9,7 @@ export interface NewBooking {
 
 export interface Booking extends NewBooking {
   id: string
-  created_at: string      // timestamptz från Supabase
+  created_at: string      
 }
 
 // Property-information som joinas in vid SELECT

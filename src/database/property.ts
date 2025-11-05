@@ -3,9 +3,8 @@
 import type { SupabaseClient, PostgrestSingleResponse } from '@supabase/supabase-js'
 import type { Property, NewProperty } from '../types/property.js'
 
-/**
- * Hämta alla properties (kan använda anon-klient för publik läsning).
- */
+/** Hämta alla properties */
+
 export async function getProperties(sb: SupabaseClient): Promise<Property[]> {
   const query = sb
     .from('properties')
@@ -16,9 +15,7 @@ export async function getProperties(sb: SupabaseClient): Promise<Property[]> {
   return response.data ?? []
 }
 
-/**
- * Hämta en specifik property med id (kan använda anon-klient).
- */
+/* Hämta en specifik property med id  */
 export async function getProperty(sb: SupabaseClient, id: string): Promise<Property | null> {
   const query = sb.from('properties').select('*').eq('id', id).single()
   const response: PostgrestSingleResponse<Property> = await query
@@ -26,9 +23,7 @@ export async function getProperty(sb: SupabaseClient, id: string): Promise<Prope
   return response.data
 }
 
-/**
- * Skapa en property (kräver auth-klient p.g.a. RLS; owner sätts till auth.uid()).
- */
+/* Skapa en property (kräver auth-klient p.g.a. RLS; owner sätts till auth.uid()). */
 export async function createProperty(
   sb: SupabaseClient,
   data: NewProperty,
@@ -41,9 +36,7 @@ export async function createProperty(
   return response.data
 }
 
-/**
- * Uppdatera en property (kräver auth-klient; RLS tillåter bara ägaren).
- */
+/* Uppdatera en property (kräver auth-klient; RLS tillåter bara ägaren). */
 export async function updateProperty(
   sb: SupabaseClient,
   id: string,
@@ -55,9 +48,7 @@ export async function updateProperty(
   return response.data
 }
 
-/**
- * Ta bort en property (kräver auth-klient; RLS tillåter bara ägaren).
- */
+/* Ta bort en property (kräver auth-klient; RLS tillåter bara ägaren). */
 export async function deleteProperty(sb: SupabaseClient, id: string): Promise<Property | null> {
   const query = sb.from('properties').delete().eq('id', id).select().single()
   const response: PostgrestSingleResponse<Property> = await query

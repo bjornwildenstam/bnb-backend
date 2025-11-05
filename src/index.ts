@@ -31,10 +31,7 @@ app.route("/properties", propertyApp)
 app.route("/bookings", bookingApp)
 app.get("/", (c) => c.text("Hello from backend!"))
 
-// 👇 Viktigt: exportera app så Vercel kan använda den
 export default app
-
-// 👇 Starta en server **bara lokalt** (Vercel behöver inte detta)
 if (!process.env.VERCEL) {
   serve(
     { fetch: app.fetch, port: Number(process.env.HONO_PORT) || 3000 },
