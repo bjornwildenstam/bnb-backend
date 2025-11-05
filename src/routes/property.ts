@@ -1,7 +1,7 @@
 // REST API-endpoints för properties: GET/POST/PUT/DELETE.
 import { Hono } from "hono"
 import type { AppBindings } from "../types/context.js"
-import { requireAuth } from '../middlewares/requireAuth.js'
+import { requireAuth } from "../middlewares/requireAuth.js"
 import { supabase, supabaseFor } from "../lib/supabase.js"
 
 const app = new Hono<AppBindings>()
@@ -11,6 +11,7 @@ app.get("/", async (c) => {
   const { data, error } = await supabase
     .from("properties")
     .select("*")
+
   if (error) return c.json({ message: error.message }, 400)
 
   const list = (data ?? []).map((p: any) => ({
@@ -22,8 +23,9 @@ app.get("/", async (c) => {
     availability: p.availability,
     createdAt: p.created_at,
     userId: p.user_id,
-    imageUrl: p.image_url ?? null, 
+    imageUrl: p.imageUrl ?? null,   // ⬅️ läs från imageUrl-kolumnen
   }))
+
   return c.json(list)
 })
 
@@ -41,7 +43,7 @@ app.post("/", requireAuth, async (c) => {
     location: String(body.location),
     price_per_night: Number(body.pricePerNight),
     availability: Boolean(body.availability),
-    image_url: body.image_url ? String(body.image_url) : null, 
+    imageUrl: body.imageUrl ? String(body.imageUrl) : null, 
   }
 
   const { data, error } = await sb
@@ -49,6 +51,7 @@ app.post("/", requireAuth, async (c) => {
     .insert(payload)
     .select("*")
     .single()
+
   if (error) return c.json({ message: error.message }, 400)
 
   return c.json({
@@ -60,27 +63,25 @@ app.post("/", requireAuth, async (c) => {
     availability: data.availability,
     createdAt: data.created_at,
     userId: data.user_id,
-    image_url: body.imageUrl ? String(body.imageUrl) : null,
+    imageUrl: data.imageUrl ?? null,       
   }, 201)
 })
 
 // GET /properties/:id
-// GET /properties/:id
 app.get("/:id", async (c) => {
-  const id = c.req.param("id"); 
+  const id = c.req.param("id")
 
   const { data, error } = await supabase
     .from("properties")
     .select("*")
-    .eq("id", id)         
-    .maybeSingle();      
+    .eq("id", id)
+    .maybeSingle()
 
   if (error) {
-    // bra att se exakt fel i dev-loggen
-    console.error("GET /properties/:id error:", error.message);
-    return c.json({ message: error.message }, 400);
+    console.error("GET /properties/:id error:", error.message)
+    return c.json({ message: error.message }, 400)
   }
-  if (!data) return c.json({ message: "Not found" }, 404);
+  if (!data) return c.json({ message: "Not found" }, 404)
 
   return c.json({
     id: data.id,
@@ -91,14 +92,14 @@ app.get("/:id", async (c) => {
     availability: data.availability,
     createdAt: data.created_at,
     userId: data.user_id,
-    imageUrl: data.image_url ?? null,
-  });
-});
+    imageUrl: data.imageUrl ?? null,       
+  })
+})
 
 // PUT /properties/:id – uppdatera (RLS kräver ägarskap)
 app.put("/:id", requireAuth, async (c) => {
   const id = c.req.param("id")
-  const user = c.get("user")!                                // 👈 behövs nu
+  const user = c.get("user")!
   const token = c.req.header("authorization")?.replace(/^Bearer\s+/i, "") || ""
   const sb = supabaseFor(token)
 
@@ -109,30 +110,22 @@ app.put("/:id", requireAuth, async (c) => {
   if (body.location !== undefined) patch.location = String(body.location)
   if (body.pricePerNight !== undefined) patch.price_per_night = Number(body.pricePerNight)
   if (body.availability !== undefined) patch.availability = Boolean(body.availability)
-  if (body.imageUrl !== undefined) patch.image_url = body.imageUrl ? String(body.imageUrl) : null
+  if (body.imageUrl !== undefined) {
+    patch.imageUrl = body.imageUrl ? String(body.imageUrl) : null   
+  }
 
-  // Försök uppdatera *endast* om raden ägs av user
   const upd = await sb
     .from("properties")
     .update(patch)
     .eq("id", id)
-    .eq("user_id", user.id)           
+    .eq("user_id", user.id)
 
   if (upd.error) {
     console.error("UPDATE error:", upd.error.message)
     return c.json({ message: upd.error.message }, 400)
   }
 
-  // Om 0 rader påverkades → inte din rad eller finns inte
-  if ((upd.count ?? 0) === 0) {
-    // PostgREST ger inte count här utan select, så gör en ägarskapscheck:
-    const own = await sb.from("properties").select("id").eq("id", id).eq("user_id", user.id).maybeSingle()
-    if (own.data == null) {
-      return c.json({ message: "Not found or not allowed" }, 404)
-    }
-  }
-
-  // Hämta nuvarande rad (för UI). SELECT är publik (policy “read all”)
+  // Hämta nuvarande rad (för UI)
   const { data, error } = await supabase
     .from("properties")
     .select("*")
@@ -150,17 +143,17 @@ app.put("/:id", requireAuth, async (c) => {
     availability: data.availability,
     createdAt: data.created_at,
     userId: data.user_id,
-    imageUrl: data.image_url ?? null,
+    imageUrl: data.imageUrl ?? null,      
   })
 })
 
 // DELETE /properties/:id – radera (RLS kräver ägarskap)
 app.delete("/:id", requireAuth, async (c) => {
-  const id = c.req.param("id") 
+  const id = c.req.param("id")
   const token = c.req.header("authorization")?.replace(/^Bearer\s+/i, "") || ""
   const sb = supabaseFor(token)
 
-  const { error } = await sb.from("properties").delete().eq("id", id) // ✅ string
+  const { error } = await sb.from("properties").delete().eq("id", id)
   if (error) return c.json({ message: error.message }, 400)
   return c.body(null, 204)
 })
