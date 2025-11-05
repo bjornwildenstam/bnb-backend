@@ -2,15 +2,16 @@
 // Importeras som '../types/property.js' i NodeNext-läge.
 
 export interface NewProperty {
-  title: string
-  description?: string | null
+  name: string
+  description: string
   location: string
   price_per_night: number
-  availability?: boolean | null
+  availability: boolean
+  imageUrl: string | null
 }
 
 export interface Property extends NewProperty {
   id: string
-  owner_id: string
+  user_id: string      
   created_at: string
 }

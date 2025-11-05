@@ -5,6 +5,10 @@ import type { MiddlewareHandler } from "hono"
 import type { AppBindings } from "../types/context.js"
 import { supabase } from "../lib/supabase.js"
 
+type SupabaseUserMetadata = {
+  name?: string
+}
+
 export const attachUser: MiddlewareHandler<AppBindings> = async (c, next) => {
   const auth = c.req.header("authorization") || ""
   const token = auth.startsWith("Bearer ") ? auth.slice(7) : ""
@@ -21,10 +25,12 @@ export const attachUser: MiddlewareHandler<AppBindings> = async (c, next) => {
   }
 
   const u = data.user
+  const metadata = (u.user_metadata ?? {}) as SupabaseUserMetadata
+
   c.set("user", {
     id: u.id,
     email: u.email ?? "",
-    name: (u.user_metadata as any)?.name ?? u.email ?? "",
+    name: metadata.name ?? u.email ?? "",
   })
 
   await next()

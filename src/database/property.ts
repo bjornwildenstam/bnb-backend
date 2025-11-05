@@ -32,9 +32,9 @@ export async function getProperty(sb: SupabaseClient, id: string): Promise<Prope
 export async function createProperty(
   sb: SupabaseClient,
   data: NewProperty,
-  ownerId: string
+  userId: string
 ): Promise<Property> {
-  const payload = { ...data, owner_id: ownerId }
+  const payload = { ...data, user_id: userId }
   const query = sb.from('properties').insert(payload).select().single()
   const response: PostgrestSingleResponse<Property> = await query
   if (response.error) throw response.error
