@@ -6,14 +6,15 @@ import propertyApp from "./routes/property.js"
 import { attachUser } from "./middlewares/auth.js"
 import authApp from "./routes/auth.js"
 import bookingApp from "./routes/booking.js"
+import type { AppBindings } from "./types/context.js"
 
-const app = new Hono({ strict: false })
 
+const app = new Hono<AppBindings>()
 // CORS först
 app.use(
   "*",
   cors({
-    origin: "*", // lås ner senare när allt funkar
+    origin: "*", 
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
